@@ -51,7 +51,7 @@
       "password": "str"
     },
     "relay": {
-      "interval": "int(1,",
+      "interval": "int(1,)",
       "inbox": "str",
       "archive": "str",
       "error": "str",
