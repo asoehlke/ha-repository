@@ -1,4 +1,0 @@
-[submodule "imaprelay"]
-	path = imaprelay
-	url = git@github.com:asoehlke/imaprelay.git
-	branch = master
