@@ -1,5 +1,4 @@
 # CHANGELOG
 
-## v1.1 - 2021-04-17
-
+## v0.1.1 - 2021-04-18
   * initial release

@@ -13,4 +13,4 @@ For usage documentation see DOCS.md.
 
 ## Bug reporting
 
-Please report bugs [on Github](https://github.com/asoehlke/ha-repository/issues).
+Please report bugs [on Github](https://github.com/asoehlke/imaprelay).
