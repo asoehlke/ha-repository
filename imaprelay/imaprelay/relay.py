@@ -76,7 +76,7 @@ class Relay(object):
             )
 
             # Take max BATCH_SIZE messages for each recipient and relay them
-            for recipient in self.config["relay"]["recipients"]:
+            for recipient in self.config["recipients"]:
                 msg_slice = self.get_next_slice(recipient["filter"])
                 while msg_slice:
                     log.info(

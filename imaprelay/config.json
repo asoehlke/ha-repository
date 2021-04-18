@@ -2,7 +2,7 @@
   "name": "Imap Relay",
   "version": "1.1",
   "slug": "imaprelay",
-  "description": "Relay catch-all mailbox to filtered recipients",
+  "description": "Relay mailbox to filtered recipients",
   "arch": [
     "armhf",
     "armv7",
@@ -10,7 +10,6 @@
     "amd64",
     "i386"
   ],
-  "startup": "before",
   "boot": "auto",
   "options": {
     "imap": {
@@ -30,14 +29,14 @@
       "error": "Error",
       "from": "forwarder@myserver.de",
       "sender": "catchall@myserver.de",
-      "recipients": [
-        {
-          "name": "all",
-          "filter": "ALL",
-          "to": "all-the-rest@myserver.de"
-        }
-      ]
-    }
+    },
+    "recipients": [
+      {
+        "name": "all",
+        "filter": "ALL",
+        "to": "all-the-rest@myserver.de"
+      }
+    ]
   },
   "schema": {
     "imap": {
@@ -57,13 +56,13 @@
       "error": "str",
       "from": "email",
       "sender": "email",
-      "recipients": [
-        {
-          "name": "str",
-          "filter": "str",
-          "to": "email"
-        }
-      ]
-    }
+    },
+    "recipients": [
+      {
+        "name": "str",
+        "filter": "str",
+        "to": "email"
+      }
+    ]
   }
 }
