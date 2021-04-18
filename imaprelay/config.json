@@ -28,7 +28,7 @@
       "archive": "Archive",
       "error": "Error",
       "from": "forwarder@myserver.de",
-      "sender": "catchall@myserver.de",
+      "sender": "catchall@myserver.de"
     },
     "recipients": [
       {
@@ -55,7 +55,7 @@
       "archive": "str",
       "error": "str",
       "from": "email",
-      "sender": "email",
+      "sender": "email"
     },
     "recipients": [
       {
