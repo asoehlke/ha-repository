@@ -32,7 +32,7 @@ class Relay(object):
     def __init__(self, config):
         self.config = config
         self.inbox = config["relay"]["inbox"]
-        self.archive_foder = config["relay"]["archive"]
+        self.archive_folder = config["relay"]["archive"]
         self.error_folder = config["relay"]["error"]
         self.sender = config["relay"]["sender"]
         self.from_ = config["relay"]["from"]
@@ -64,10 +64,10 @@ class Relay(object):
                 )
             )
 
-        if self.archive_foder not in folders:
+        if self.archive_folder not in folders:
             raise RelayError(
                 'No "{0}" folder found! Where should I archive messages to?'.format(
-                    self.archive_foder
+                    self.archive_folder
                 )
             )
 
@@ -192,7 +192,7 @@ class Relay(object):
 
         if send_success:
             # Copy messages to archive folder
-            self._chk(self.imap.copy(message_ids, self.archive_foder))
+            self._chk(self.imap.copy(message_ids, self.archive_folder))
         else:
             # Copy messages to error folder
             self._chk(self.imap.copy(message_ids, self.error_folder))
@@ -224,19 +224,8 @@ class Relay(object):
             return False
 
         # check that configured folders exist
-        folders = self.imap.list()
-        if self.archive_foder not in folders:
-            raise ConfigError(
-                "Archive folder {folder} does not exist, check configuration".format(
-                    folder=self.archive_foder
-                )
-            )
-        if self.error_folder not in folders:
-            raise ConfigError(
-                "Error folder {folder} does not exist, check configuration".format(
-                    folder=self.error_folder
-                )
-            )
+        self._check_folder_exists(self.error_folder)
+        self._check_folder_exists(self.archive_folder)
 
         try:
             self.smtp = make_smtp_connection(self.config["smtp"])
@@ -263,6 +252,16 @@ class Relay(object):
             self.smtp.quit()
         except (smtplib.SMTPServerDisconnected, AttributeError):
             pass
+
+    def _check_folder_exists(self, folder):
+        folders = self._chk(self.imap.list(pattern=folder))
+        if len(folders) == 0 or not folders[0]:
+            log.error("Error")
+            raise ConfigError(
+                'folder "{folder}" does not exist, check configuration'.format(
+                    folder=folder
+                )
+            )
 
     def _chk(self, res):
         typ, data = res
