@@ -16,6 +16,10 @@ log = logging.getLogger(__name__)
 BATCH_SIZE = 10
 
 
+class ConfigError(Exception):
+    pass
+
+
 class RelayError(Exception):
     pass
 
@@ -28,8 +32,8 @@ class Relay(object):
     def __init__(self, config):
         self.config = config
         self.inbox = config["relay"]["inbox"]
-        self.archive = config["relay"]["archive"]
-        self.errorfolder = config["relay"]["error"]
+        self.archive_foder = config["relay"]["archive"]
+        self.error_folder = config["relay"]["error"]
         self.sender = config["relay"]["sender"]
         self.from_ = config["relay"]["from"]
 
@@ -60,10 +64,10 @@ class Relay(object):
                 )
             )
 
-        if self.archive not in folders:
+        if self.archive_foder not in folders:
             raise RelayError(
                 'No "{0}" folder found! Where should I archive messages to?'.format(
-                    self.archive
+                    self.archive_foder
                 )
             )
 
@@ -110,7 +114,9 @@ class Relay(object):
 
                 # replace sender address to avoid DMARC bounce, keep original name
                 fromAddress = re.sub(
-                    "<.*>", "<{sender}>".format(sender=self.from_), originalFrom
+                    "<.*>",
+                    "via forwarder <{sender}>".format(sender=self.from_),
+                    originalFrom,
                 )
                 eml.replace_header("from", fromAddress)
 
@@ -186,11 +192,10 @@ class Relay(object):
 
         if send_success:
             # Copy messages to archive folder
-            self._chk(self.imap.copy(message_ids, self.archive))
+            self._chk(self.imap.copy(message_ids, self.archive_foder))
         else:
             # Copy messages to error folder
-            self._chk(self.imap.copy(message_ids, self.errorfolder))
-            pass
+            self._chk(self.imap.copy(message_ids, self.error_folder))
 
         # Mark messages as deleted on server
         self._chk(self.imap.store(message_ids, "+FLAGS", r"(\Deleted)"))
@@ -217,6 +222,21 @@ class Relay(object):
         except (socket.error, imaplib.IMAP4.error):
             log.exception("Got IMAP connection error!")
             return False
+
+        # check that configured folders exist
+        folders = self.imap.list()
+        if self.archive_foder not in folders:
+            raise ConfigError(
+                "Archive folder {folder} does not exist, check configuration".format(
+                    folder=self.archive_foder
+                )
+            )
+        if self.error_folder not in folders:
+            raise ConfigError(
+                "Error folder {folder} does not exist, check configuration".format(
+                    folder=self.error_folder
+                )
+            )
 
         try:
             self.smtp = make_smtp_connection(self.config["smtp"])

@@ -1,6 +1,6 @@
 {
   "name": "Imap Relay",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "slug": "imaprelay",
   "description": "Relay mailbox to filtered recipients",
   "url": "https://github.com/asoehlke/imaprelay",
