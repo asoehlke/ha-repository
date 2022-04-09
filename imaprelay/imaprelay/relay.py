@@ -207,14 +207,11 @@ class Relay(object):
         interval = self.config["relay"]["interval"]
         log.info("Start relaying from {0}".format(self.config["imap"]["username"]))
 
-        try:
-            while 1:
-                r = self.relay()
-                t = interval if r else interval * 10
-                log.debug("Sleeping for %d seconds", t)
-                time.sleep(t)
-        except KeyboardInterrupt:
-            log.warn("Caught interrupt, quitting!")
+        while True:
+            r = self.relay()
+            t = interval if r else interval * 10
+            log.debug("Sleeping for %d seconds", t)
+            time.sleep(t)
 
     def _open_connections(self):
         try:
@@ -241,16 +238,19 @@ class Relay(object):
         try:
             self.imap.close()
         except (imaplib.IMAP4.error, AttributeError):
+            log.exception("Could not close mailbox!")
             pass
 
         try:
             self.imap.logout()
         except (imaplib.IMAP4.error, AttributeError):
+            log.exception("Could not logout!")
             pass
 
         try:
             self.smtp.quit()
         except (smtplib.SMTPServerDisconnected, AttributeError):
+            log.exception("Could not quit smtp connection!")
             pass
 
     def _check_folder_exists(self, folder):

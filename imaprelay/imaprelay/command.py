@@ -6,6 +6,7 @@ import stat
 import sys
 
 from relay import Relay
+from time import sleep
 
 logging.basicConfig(
     format="%(asctime)-15s  %(levelname)-8s  %(message)s", level=logging.INFO
@@ -29,9 +30,17 @@ def main():
     with open(configfile) as f:
         config = json.load(f)
 
-    rly = Relay(config)
-
-    rly.loop()
+    while True:
+        try:
+            rly = Relay(config)
+            rly.loop()
+        except KeyboardInterrupt:
+            log.warn("Caught interrupt, quitting!")
+            return
+        except BaseException:
+            log.exception("Error occurred, restarting in a minute")
+            sleep(60)
+            pass
 
 
 if __name__ == "__main__":
