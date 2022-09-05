@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## v0.1.4 - 2022-09-05
+  * fix s6-overlay-suexec error
+
 ## v0.1.3 - 2022-04-09
   * improve error handling: restart after 60 seconds
 
