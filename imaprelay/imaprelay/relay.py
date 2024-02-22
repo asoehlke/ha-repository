@@ -143,7 +143,6 @@ class Relay(object):
                             err=err,
                         )
                     )
-                    log.info("Message: {0}".format(eml.as_string()))
 
                 if not send_success:
                     # might have been identified as spam, try with simple from
@@ -198,6 +197,7 @@ class Relay(object):
         else:
             # Copy messages to error folder
             self._chk(self.imap.copy(message_ids, self.error_folder))
+            log.debug("Message: {0}".format(eml.as_string()))
 
         # Mark messages as deleted on server
         self._chk(self.imap.store(message_ids, "+FLAGS", r"(\Deleted)"))
