@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## v0.1.5 - 2024-02-22
+  * fix header line break policy SMTP error (SMTP protocol violation: A header line must be terminated by CRLF)
+
 ## v0.1.4 - 2022-09-05
   * fix s6-overlay-suexec error
 

@@ -110,7 +110,7 @@ class Relay(object):
                 try:
                     eml.replace_header("reply-to", eml["reply-to"])
                 except KeyError:
-                    eml["reply-to"] = eml["from"]
+                    eml.add_header("reply-to", eml["from"])
 
                 # replace sender address to avoid DMARC bounce, keep original name
                 fromAddress = re.sub(
@@ -123,10 +123,10 @@ class Relay(object):
                 try:
                     eml.replace_header("sender", self.from_)
                 except KeyError:
-                    eml["sender"] = self.from_
+                    eml.add_header("sender", self.from_)
 
                 try:
-                    self.smtp.sendmail(self.sender, recipient, eml.as_bytes())
+                    self.smtp.sendmail(self.sender, recipient, eml.as_bytes(policy=eml.policy.clone(linesep='\r\n')))
                     send_success = True
                     log.debug(
                         "Sent message '{subj}' from {from_} to {to}".format(
@@ -143,6 +143,8 @@ class Relay(object):
                             err=err,
                         )
                     )
+                    log.info("Message: {0}".format(eml.as_string()))
+
                 if not send_success:
                     # might have been identified as spam, try with simple from
                     eml.replace_header("from", self.sender)
